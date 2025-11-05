@@ -1,6 +1,8 @@
+import React, { useState } from "react";
 import project1 from "../assets/images/projects/project1.png";
 import project2 from "../assets/images/projects/project2.jpg";
-import project3 from "../assets/images/projects/project3.png";
+import project3 from "../assets/images/projects/portfolioImg.png";
+import project4 from "../assets/images/projects/weatherApp.png";
 
 const projects = [
   {
@@ -27,16 +29,29 @@ const projects = [
     description:
       "A personal portfolio built with React to showcase projects, skills, and experience through a clean, responsive, and modern design.",
   },
+  {
+    id: 4,
+    image: project4,
+    tech: "React App • Javascript • CSS ",
+    title: "Weather Dashboard",
+    description:
+      "A real-time weather dashboard built with React that fetches data from OpenWeather API, displaying current conditions and 5-day forecasts with a clean, responsive interface.",
+  },
 ];
 
 const Portfolio = () => {
+  const [showAll, setShowAll] = useState(false);
+  
+  // Show first 3 projects by default, all 4 when showAll is true
+  const displayedProjects = showAll ? projects : projects.slice(0, 3);
+
   return (
     <section id="portfolio" className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto px-6 md:px-10 lg:px-20">
         {/* heading */}
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white">
-            My <span className="text-blue-500">{'{dev}'}</span> projects
+            My <span className="text-blue-400">{'{dev}'}</span> projects
           </h2>
           <p className="mt-3 text-sm md:text-base text-gray-600 dark:text-gray-300">
             A selection of my recent frontend development projects showcasing my skills in React.js, and modern web technologies.
@@ -45,7 +60,7 @@ const Portfolio = () => {
 
         {/* project cards */}
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {projects.map((p) => (
+          {displayedProjects.map((p) => (
             <div
               key={p.id}
               className="flex flex-col bg-gray-50 dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
@@ -74,14 +89,16 @@ const Portfolio = () => {
         </div>
 
         {/* see all button */}
-        <div className="mt-10 text-center">
-          <a
-            href="#portfolio"
-            className="text-blue-600 dark:text-blue-400 font-medium text-sm border-b border-blue-500 pb-0.5 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-          >
-            See all apps
-          </a>
-        </div>
+        {!showAll && (
+          <div className="mt-10 text-center">
+            <button
+              onClick={() => setShowAll(true)}
+              className= "text-blue-400 dark:text-blue-400 font-medium text-sm pb-0.5 hover:text-blue-500 dark:hover:text-blue-500 transition-colors outline-none focus:outline-none border-none active:outline-none hover:outline-none underline underline-offset-8 bg-transparent bg-none"
+            >
+              See all apps
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

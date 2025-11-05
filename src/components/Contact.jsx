@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import emailjs from "@emailjs/browser";
 
 const Contact = () => {
+  const form = useRef();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
+
+  const [status, setStatus] = useState("");
 
   // Allow only letters and spaces for the name field
   const handleNameChange = (e) => {
@@ -21,9 +25,31 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    alert("Message sent successfully!");
-    setFormData({ name: "", email: "", message: "" });
+
+    // 🔹 EmailJS integration
+    emailjs
+      .sendForm(
+        "service_40sjr34",
+        "template_lqkogzo",
+        form.current,
+        "OFG90F9KdtGjVqJnM"
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+          setStatus("✅ Message sent successfully!");
+          setFormData({ name: "", email: "", message: "" });
+
+          // 🔁 Refresh after 2 seconds
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        },
+        (error) => {
+          console.error(error.text);
+          setStatus("❌ Failed to send message. Please try again.");
+        }
+      );
   };
 
   return (
@@ -44,6 +70,7 @@ const Contact = () => {
 
       {/* Form */}
       <form
+        ref={form}
         onSubmit={handleSubmit}
         className="mt-10 w-full max-w-lg flex flex-col gap-5"
       >
@@ -98,6 +125,13 @@ const Contact = () => {
         >
           Send Message
         </button>
+
+        {/* Status Message */}
+        {status && (
+          <p className="text-center text-sm mt-3 transition-all duration-300">
+            {status}
+          </p>
+        )}
       </form>
     </section>
   );
