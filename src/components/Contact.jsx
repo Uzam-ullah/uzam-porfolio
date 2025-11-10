@@ -119,8 +119,8 @@ const Contact = () => {
         {/* Button */}
         <button
           type="submit"
-          className="mt-2 w-full md:w-auto self-center bg-blue-500 hover:bg-blue-600 
-          dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium px-8 py-3 
+          className="mt-2 w-full md:w-auto self-center bg-blue-400 hover:bg-blue-5s00 
+          dark:bg-blue-400 dark:hover:bg-blue-500 text-white font-medium px-8 py-3 
           rounded-full transition-all duration-300 shadow-md"
         >
           Send Message
