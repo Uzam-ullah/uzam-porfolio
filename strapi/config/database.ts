@@ -1,60 +1,14 @@
-import path from 'path';
-
-export default ({ env }) => {
-  // --- THIS LINE IS NOW FIXED ---
-  // It will use 'sqlite' by default (for local),
-  // but Strapi Cloud will override it with 'postgres'.
-  const client = env('DATABASE_CLIENT', 'sqlite');
-
-  const connections = {
-    // --- I AM DELETING THE MYSQL BLOCK ---
-    // This will cause a new error if the app is still trying
-    // to use 'mysql', which will prove the environment
-    // variable is the problem.
-    /*
-    mysql: {
-      connection: {
-        host: env('DATABASE_HOST', 'localhost'),
-        port: env.int('DATABASE_PORT', 3306),
-        database: env('DATABASE_NAME', 'strapi'),
-        user: env('DATABASE_USERNAME', 'strapi'),
-        password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          key: env('DATABASE_SSL_KEY', undefined),
-          cert: env('DATABASE_SSL_CERT', undefined),
-          ca: env('DATABASE_SSL_CA', undefined),
-          capath: env('DATABASE_SSL_CAPATH', undefined),
-          cipher: env('DATABASE_SSL_CIPHER', undefined),
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
-        },
-      },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
-    },
-    */
-
-    // This block is correct for Strapi Cloud
-    postgres: {
-      connection: {
-        connectionString: env('DATABASE_URL'),
-        ssl: { rejectUnauthorized: false }, // CRITICAL for Strapi Cloud
-      },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
-    },
-    
-    // This block is correct for your local development
-    sqlite: {
-      connection: {
-        filename: path.join(__dirname, '..', '..', env('DATABASE_FILENAME', '.tmp/data.db')),
-      },
-      useNullAsDefault: true,
-    },
-  };
-
-  return {
+export default ({ env }) => ({
+  connection: {
+    client: 'postgres',
     connection: {
-      client,
-      ...connections[client],
-      acquireConnectionTimeout: env.int('DATABASE_CONNECTION_TIMEOUT', 60000),
+      host: env('DATABASE_HOST'),
+      port: env('DATABASE_PORT'),
+      database: env('DATABASE_NAME'),
+      user: env('DATABASE_USERNAME'),
+      password: env('DATABASE_PASSWORD'),
+      ssl: env('DATABASE_SSL') === 'true',
     },
-  };
-};
+    useNullAsDefault: true,
+  },
+});
