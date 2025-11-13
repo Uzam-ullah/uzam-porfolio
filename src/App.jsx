@@ -7,6 +7,7 @@ import Blog from './components/Blog';
 import About from './components/About';
 import Contact from './components/Contact';
 import useFetch from './components/hooks/useFetch';
+import LoadingScreen from "./components/LoadingScreen";
 import './App.css';
 
 function App() {
@@ -65,7 +66,7 @@ function App() {
   }, [location.pathname, location.hash, navigate]);
 
   // ✅ Handle loading and error inside JSX (not before hooks)
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingScreen />;
   if (error) return <div>Error: {error.message}</div>;
 
   console.log(data);
