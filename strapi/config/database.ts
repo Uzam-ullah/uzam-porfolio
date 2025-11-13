@@ -7,8 +7,12 @@ export default ({ env }) => {
   const client = env('DATABASE_CLIENT', 'sqlite');
 
   const connections = {
+    // --- I AM DELETING THE MYSQL BLOCK ---
+    // This will cause a new error if the app is still trying
+    // to use 'mysql', which will prove the environment
+    // variable is the problem.
+    /*
     mysql: {
-      // This block no longer matters, but we leave it.
       connection: {
         host: env('DATABASE_HOST', 'localhost'),
         port: env.int('DATABASE_PORT', 3306),
@@ -26,6 +30,7 @@ export default ({ env }) => {
       },
       pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
     },
+    */
 
     // This block is correct for Strapi Cloud
     postgres: {
