@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import Logopic from "../assets/images/namelogo.png";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState("light");
   const [activeSection, setActiveSection] = useState("home");
+  const navigate = useNavigate();
 
   useEffect(() => {
     try {
@@ -18,7 +20,7 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["home", "about", "portfolio", "blog"];
+      const sections = ["home", "about", "portfolio", "blog", "contact"];
       const scrollPos = window.scrollY + 200;
 
       for (let id of sections) {
@@ -36,6 +38,9 @@ const Header = () => {
   const handleSetActive = (id) => {
     setActiveSection(id);
     setIsOpen(false);
+
+    // Use react-router navigation instead of hash
+    navigate(id === "home" ? "/" : `/${id}`);
   };
 
   const handleToggle = () => {
@@ -56,10 +61,13 @@ const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-transparent backdrop-blur-md border-b border-transparent dark:border-gray-800 transition-colors">
-      
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo + Text Group */}
-        <a href="#home" className="flex items-center shrink-1" aria-label="Go to home">
+        <button
+          onClick={() => handleSetActive("home")}
+          className="flex items-center shrink-1 focus:outline-none active:outline-none bg-transparent border-none"
+          aria-label="Go to home"
+        >
           <div className="flex items-center -space-x-2">
             <img
               src={Logopic}
@@ -75,19 +83,18 @@ const Header = () => {
               </span>
             </div>
           </div>
-        </a>
+        </button>
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex gap-8 items-center">
           {menuItems.map((m) => (
-            <a
+            <button
               key={m.id}
-              href={`#${m.id}`}
               onClick={() => handleSetActive(m.id)}
-              className={`relative no-underline text-base font-medium visited:text-gray-800 dark:visited:text-gray-200 active:text-gray-800 dark:active:text-gray-200 focus:text-gray-800 dark:focus:text-gray-200 ${
+              className={`relative no-underline text-base font-medium bg-transparent border-none cursor-pointer focus:outline-none active:outline-none ${
                 activeSection === m.id
                   ? "text-black dark:text-white"
-                  : "text-black/70 dark:text-white/70 visited:text-black hover:text-black dark:hover:text-white"
+                  : "text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white"
               }`}
             >
               {m.label}
@@ -96,20 +103,20 @@ const Header = () => {
                   activeSection === m.id ? "w-full" : "w-0"
                 }`}
               />
-            </a>
+            </button>
           ))}
         </nav>
 
         {/* Right: Contact + Theme Toggle + Mobile Menu */}
         <div className="flex items-center gap-3 h-full">
-          <a
-            href="#contact"
-            className="hidden md:inline-block border border-black dark:border-white text-black dark:text-white px-3 py-1 rounded-full hover:border-blue-400 hover:text-black dark:hover:border-blue-400 transition text-sm"
+          <button
+            onClick={() => handleSetActive("contact")}
+            className="hidden md:inline-block border border-black dark:border-white text-black dark:text-white px-3 py-1 rounded-full hover:border-blue-400 hover:text-black dark:hover:border-blue-400 transition text-sm focus:outline-none active:outline-none bg-transparent"
           >
             Contact me
-          </a>
+          </button>
 
-          <label htmlFor="theme-toggle" className="relative inline-flex items-center cursor-pointer">
+          <label htmlFor="theme-toggle" className="relative inline-flex items-center cursor-pointer focus:outline-none active:outline-none bg-transparent">
             <input
               id="theme-toggle"
               type="checkbox"
@@ -133,7 +140,7 @@ const Header = () => {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden border-none  text-blue-400 bg-transparent"
+            className="md:hidden border-none text-blue-400 bg-transparent focus:outline-none active:outline-none"
             onClick={() => setIsOpen((s) => !s)}
             aria-label="Toggle menu"
           >
@@ -147,26 +154,24 @@ const Header = () => {
         <div className="md:hidden bg-white dark:bg-gray-900">
           <nav className="flex flex-col px-6 py-4 gap-3">
             {menuItems.map((m) => (
-              <a
+              <button
                 key={m.id}
-                href={`#${m.id}`}
                 onClick={() => handleSetActive(m.id)}
-                className={`transition ${
+                className={`transition text-center bg-transparent border-none focus:outline-none active:outline-none ${
                   activeSection === m.id
                     ? "text-blue-400"
                     : "text-gray-800 dark:text-gray-200"
                 }`}
               >
                 {m.label}
-              </a>
+              </button>
             ))}
-            <a
-              href="#contact"
-              onClick={() => setIsOpen(false)}
-              className="text-blue-400 dark:text-blue-300 transition"
+            <button
+              onClick={() => handleSetActive("contact")}
+              className="text-blue-400 dark:text-blue-300 transition bg-transparent border-none focus:outline-none active:outline-none text-center"
             >
               Contact me
-            </a>
+            </button>
           </nav>
         </div>
       )}
