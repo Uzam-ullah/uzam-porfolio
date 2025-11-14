@@ -15,7 +15,7 @@ function App() {
   const navigate = useNavigate();
 
   // ✅ Hook should always be declared before any conditional return
-  const { data, loading, error } = useFetch('http://localhost:1337/api/blogs?populate=*');
+  const { data, loading, error } = useFetch('https://giving-excitement-72c292e9c9.strapiapp.com/api/blogs?populate=*');
 
   useEffect(() => {
     const map = {
