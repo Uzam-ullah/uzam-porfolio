@@ -93,7 +93,7 @@ const Blog = ({ data }) => {
   const location = useLocation();
 
   // Get base URL from environment variable
-  const baseURL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
+  const baseURL = 'https://giving-excitement-72c292e9c9.strapiapp.com';
 
   /* ---------- Helper: Convert rich text blocks to plain text ---------- */
   const getPlainText = (blocks) => {
