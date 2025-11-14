@@ -92,6 +92,9 @@ const Blog = ({ data }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Get base URL from environment variable
+  const baseURL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
+
   /* ---------- Helper: Convert rich text blocks to plain text ---------- */
   const getPlainText = (blocks) => {
     if (!Array.isArray(blocks)) return "";
@@ -124,7 +127,7 @@ const Blog = ({ data }) => {
           date: attr.date || "Unknown",
           readTime: attr.readTime || "3 min read",
           coverImage: attr.coverImage?.url
-            ? `http://localhost:1337${attr.coverImage.url}`
+            ? `${baseURL}${attr.coverImage.url}`
             : "https://via.placeholder.com/400x250?text=No+Image",
           // include the raw rich-content blocks so the detail modal can render sections
           body: rawBody,

@@ -4,11 +4,18 @@ const useFetch = (url) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await fetch(url);
+                // Get the base URL from environment variable
+                const baseURL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
+                
+                // Combine base URL with the endpoint
+                const fullURL = url.startsWith('http') ? url : `${baseURL}${url}`;
+                
+                const res = await fetch(fullURL);
                 const json = await res.json();
                 setData(json);
                 setLoading(false);
@@ -17,14 +24,10 @@ const useFetch = (url) => {
                 setLoading(false);
             }
         };
-            fetchData();
-
-    },[url]);
-    
-
-
+        fetchData();
+    }, [url]);
 
     return { data, loading, error };
+};
 
-}
 export default useFetch;
