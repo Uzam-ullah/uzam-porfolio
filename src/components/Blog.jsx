@@ -128,10 +128,10 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
           date: attr.date || "Unknown",
           readTime: attr.readTime || "3 min read",
           coverImage: attr.coverImage?.url
-            ? attr.coverImage.url.startsWith('http')
-              ? attr.coverImage.url
-              : `${baseURL}${attr.coverImage.url}`
-            : "https://via.placeholder.com/400x250?text=No+Image",
+  ? attr.coverImage.url.startsWith('http')
+    ? attr.coverImage.url
+    : `${baseURL}/${attr.coverImage.url.replace(/^\/+/, '')}`
+  : "https://via.placeholder.com/400x250?text=No+Image",
           // include the raw rich-content blocks so the detail modal can render sections
           body: rawBody,
           // --- THIS IS THE FIX ---
