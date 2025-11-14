@@ -118,6 +118,23 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
           attr.content ||
           attr.sections ||
           [];
+        
+        // Fix: Get cover image URL properly
+        let coverImageUrl = "https://via.placeholder.com/400x250?text=No+Image";
+        if (attr.coverImage?.url) {
+          const imageUrl = attr.coverImage.url;
+          if (imageUrl.startsWith('http')) {
+            // Already a full URL from media library
+            coverImageUrl = imageUrl;
+          } else if (imageUrl.startsWith('/')) {
+            // Relative path, add baseURL
+            coverImageUrl = `${baseURL}${imageUrl}`;
+          } else {
+            // No leading slash, add it
+            coverImageUrl = `${baseURL}/${imageUrl}`;
+          }
+        }
+        
         return {
           id: attr.id,
           title: typeof attr.title === "string" ? attr.title : "Untitled Post",
@@ -127,11 +144,7 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
           author: typeof attr.author === "string" ? attr.author : "Unknown",
           date: attr.date || "Unknown",
           readTime: attr.readTime || "3 min read",
-          coverImage: attr.coverImage?.url
-  ? attr.coverImage.url.startsWith('http')
-    ? attr.coverImage.url
-    : `${baseURL}/${attr.coverImage.url.replace(/^\/+/, '')}`
-  : "https://via.placeholder.com/400x250?text=No+Image",
+          coverImage: coverImageUrl,
           // include the raw rich-content blocks so the detail modal can render sections
           body: rawBody,
           // --- THIS IS THE FIX ---
