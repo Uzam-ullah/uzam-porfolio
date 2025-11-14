@@ -9,17 +9,18 @@ const useFetch = (url) => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Get the base URL from environment variable
-                const baseURL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
-                
-                // Combine base URL with the endpoint
+                // Hardcode for testing
+                const baseURL = 'https://giving-excitement-72c292e9c9.strapiapp.com';
                 const fullURL = url.startsWith('http') ? url : `${baseURL}${url}`;
+                
+                console.log('Fetching from:', fullURL); // DEBUG
                 
                 const res = await fetch(fullURL);
                 const json = await res.json();
                 setData(json);
                 setLoading(false);
             } catch (err) {
+                console.error('Fetch error:', err); // DEBUG
                 setError(err);
                 setLoading(false);
             }
