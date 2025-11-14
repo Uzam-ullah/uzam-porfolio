@@ -9,22 +9,33 @@ const useFetch = (url) => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Hardcode for testing
+                // Cloud Strapi Base URL
                 const baseURL = 'https://giving-excitement-72c292e9c9.strapiapp.com';
-                const fullURL = url.startsWith('http') ? url : `${baseURL}${url}`;
-                
-                console.log('Fetching from:', fullURL); // DEBUG
-                
+
+                let fullURL = url;
+
+                // Force replace ANY localhost URL
+                if (url.includes("localhost") || url.includes("1337")) {
+                    fullURL = url.replace("http://localhost:1337", baseURL);
+                }
+                // If relative URL like "/api/blogs"
+                else if (!url.startsWith("http")) {
+                    fullURL = `${baseURL}${url}`;
+                }
+
+                console.log("Fetching from:", fullURL);
+
                 const res = await fetch(fullURL);
                 const json = await res.json();
                 setData(json);
                 setLoading(false);
             } catch (err) {
-                console.error('Fetch error:', err); // DEBUG
+                console.error("Fetch error:", err);
                 setError(err);
                 setLoading(false);
             }
         };
+
         fetchData();
     }, [url]);
 

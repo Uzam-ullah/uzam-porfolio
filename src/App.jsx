@@ -14,8 +14,8 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // ✅ Hook should always be declared before any conditional return
-  const { data, loading, error } = useFetch('https://giving-excitement-72c292e9c9.strapiapp.com/api/blogs?populate=*');
+  // ✅ Only this line is changed
+  const { data, loading, error } = useFetch('/api/blogs?populate=*');
 
   useEffect(() => {
     const map = {
@@ -65,7 +65,6 @@ function App() {
     }
   }, [location.pathname, location.hash, navigate]);
 
-  // ✅ Handle loading and error inside JSX (not before hooks)
   if (loading) return <LoadingScreen />;
   if (error) return <div>Error: {error.message}</div>;
 
