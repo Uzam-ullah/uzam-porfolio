@@ -122,17 +122,8 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
         // Fix: Get cover image URL properly
         let coverImageUrl = "https://via.placeholder.com/400x250?text=No+Image";
         if (attr.coverImage?.url) {
-          const imageUrl = attr.coverImage.url;
-          if (imageUrl.startsWith('http')) {
-            // Already a full URL from media library
-            coverImageUrl = imageUrl;
-          } else if (imageUrl.startsWith('/')) {
-            // Relative path, add baseURL
-            coverImageUrl = `${baseURL}${imageUrl}`;
-          } else {
-            // No leading slash, add it
-            coverImageUrl = `${baseURL}/${imageUrl}`;
-          }
+          // Strapi returns full CDN URLs from media library
+          coverImageUrl = attr.coverImage.url;
         }
         
         return {
