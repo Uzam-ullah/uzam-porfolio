@@ -124,6 +124,7 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
         if (attr.coverImage?.url) {
           // Strapi returns full CDN URLs from media library
           coverImageUrl = attr.coverImage.url;
+          console.log('Image URL:', coverImageUrl); // DEBUG
         }
         
         return {
