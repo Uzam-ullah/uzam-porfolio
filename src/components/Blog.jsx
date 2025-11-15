@@ -98,19 +98,19 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
 
   /* ---------- Helper: Convert rich text blocks to plain text ---------- */
   const getPlainText = (blocks) => {
+    if (!blocks) return "";
+    if (typeof blocks === "string") return blocks;
     if (!Array.isArray(blocks)) return "";
     return blocks
-      .map((block) =>
-        block.children?.map((child) => child.text).join("") || ""
-      )
+      .map((block) => block.children?.map((child) => child.text).join("") || "")
       .join("\n");
   };
 
   /* ---------- Normalize Strapi posts ---------- */
   const sourcePosts = Array.isArray(data?.data)
     ? data.data.map((item) => {
-        const attr = item;
-        // Try several possible fields for rich content coming from Strapi
+        const attr = item?.attributes ?? item ?? {};
+
         const rawBody =
           attr.body ||
           attr.Section ||
@@ -118,30 +118,28 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
           attr.content ||
           attr.sections ||
           [];
-        
-        // Fix: Get cover image URL properly
+
+        const strapiBase = (import.meta.env.VITE_STRAPI_URL || "https://giving-excitement-72c292e9c9.strapiapp.com").replace(/\/$/, "");
+        const cover =
+          attr?.coverImage?.data?.attributes?.url ||
+          attr?.coverImage?.url ||
+          attr?.image?.data?.attributes?.url;
+
         let coverImageUrl = "https://via.placeholder.com/400x250?text=No+Image";
-        if (attr.coverImage?.url) {
-          // Strapi returns full CDN URLs from media library
-          coverImageUrl = attr.coverImage.url;
-          console.log('Image URL:', coverImageUrl); // DEBUG
+        if (typeof cover === "string") {
+          coverImageUrl = cover.startsWith("http") ? cover : `${strapiBase}${cover}`;
         }
-        
+
         return {
-          id: attr.id,
+          id: item.id,
           title: typeof attr.title === "string" ? attr.title : "Untitled Post",
-          excerpt: getPlainText(attr.excerpt),
-          category:
-            typeof attr.category === "string" ? attr.category : "General",
+          excerpt: typeof attr.excerpt === "string" ? attr.excerpt : getPlainText(attr.excerpt),
+          category: typeof attr.category === "string" ? attr.category : "General",
           author: typeof attr.author === "string" ? attr.author : "Unknown",
           date: attr.date || "Unknown",
           readTime: attr.readTime || "3 min read",
           coverImage: coverImageUrl,
-          // include the raw rich-content blocks so the detail modal can render sections
           body: rawBody,
-          // --- THIS IS THE FIX ---
-          // BlogDetailPage needs the 'Section' property. 'rawBody' already found it,
-          // but we need to pass it under the name 'Section'.
           Section: rawBody,
         };
       })
