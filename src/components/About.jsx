@@ -92,7 +92,7 @@ const About = () => {
             Problem solver &lt;coder&gt;
           </h2>
           <p className="mt-3 text-sm md:text-base text-gray-600 dark:text-gray-300">
-            Frontend Developer with over 1 year of experience.
+            Frontend Developer with upto 1 year of experience.
           </p>
         </div>
 
