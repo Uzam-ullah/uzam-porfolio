@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useId } from "react";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import Logopic from "../assets/images/namelogo.png";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -6,10 +6,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 const Header = ({ neutral = false, onNavigate }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState("light");
-  // Start with no active item in neutral mode to avoid underline flicker
   const [activeSection, setActiveSection] = useState(neutral ? "" : "home");
   const navigate = useNavigate();
   const location = useLocation();
+  const switchId = useId(); // unique id per header instance
 
   useEffect(() => {
     try {
@@ -158,9 +158,9 @@ const Header = ({ neutral = false, onNavigate }) => {
             Contact me
           </button>
 
-          <label htmlFor="theme-toggle" className="relative inline-flex items-center cursor-pointer focus:outline-none active:outline-none bg-transparent">
+          <label htmlFor={switchId} className="relative inline-flex items-center cursor-pointer focus:outline-none active:outline-none bg-transparent">
             <input
-              id="theme-toggle"
+              id={switchId}
               type="checkbox"
               className="sr-only"
               checked={theme === "dark"}
