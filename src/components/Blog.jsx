@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Calendar, Clock, ArrowRight, Code2, Layers } from "lucide-react";
 import BlogDetailPage from "../components/BlogDetailPage.jsx";
+import Header from "./Header";
 
 /* ---------- Helper: category icon ---------- */
 export const getCategoryIcon = (category) => {
@@ -175,6 +176,13 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
     if (selectedPost) window.scrollTo(0, 0);
   }, [selectedPost]);
 
+  const openPost = (post) => {
+    const slug = slugify(post.title);
+    setSelectedPost(post);
+    // Push slug route so Back returns to /blog
+    navigate(`/blog/${slug}`);
+  };
+
   return (
     <section id="blog" className="w-full py-20 md:py-28 bg-transparent">
       <div className="container mx-auto px-6">
@@ -210,18 +218,9 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
 
         {/* Blog cards */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-12">
-          {displayedPosts.map((post) => (
-            <BlogCard
-              key={post.id}
-              post={post}
-              onRead={(p) => {
-                setSelectedPost(p);
-                try {
-                  navigate(`/blog/${slugify(p.title)}`);
-                } catch {}
-              }}
-            />
-          ))}
+          {displayedPosts.map(p => (
+  <BlogCard key={p.id} post={p} onRead={openPost} />
+))}
         </div>
 
         {/* Show more button */}
@@ -249,12 +248,18 @@ const baseURL = import.meta.env.VITE_STRAPI_URL || 'https://giving-excitement-72
       {selectedPost && (
         <BlogDetailPage
           post={selectedPost}
-          onClose={() => {
+          onClose={(meta) => {
             setSelectedPost(null);
-            try {
+            // If closed by browser history change, do nothing (URL already changed)
+            if (meta?.viaHistory) return;
+            // If closed by header nav, target path already handled
+            if (meta?.viaHeader) return;
+            // Normal close (Back button inside modal)
+            if (location.pathname.startsWith("/blog/")) {
               navigate("/blog");
-            } catch {}
+            }
           }}
+          HeaderComponent={Header}
         />
       )}
     </section>

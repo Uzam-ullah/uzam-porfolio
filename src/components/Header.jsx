@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import Logopic from "../assets/images/namelogo.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ neutral = false, onNavigate }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState("light");
-  const [activeSection, setActiveSection] = useState("home");
+  // Start with no active item in neutral mode to avoid underline flicker
+  const [activeSection, setActiveSection] = useState(neutral ? "" : "home");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     try {
@@ -20,6 +22,9 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      // Skip when BlogDetailPage modal is open or header is neutral (in modal)
+      if (document.body.style.position === "fixed" || neutral) return;
+
       const sections = ["home", "about", "portfolio", "blog", "contact"];
       const scrollPos = window.scrollY + 200;
 
@@ -33,14 +38,45 @@ const Header = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [neutral]);
+
+  // Ensure no item appears active in neutral mode
+  useEffect(() => {
+    if (neutral) setActiveSection("");
+  }, [neutral]);
+
+  // Sync activeSection with current pathname (non-neutral only)
+  useEffect(() => {
+    if (neutral) return;
+    const map = {
+      "/": "home",
+      "/home": "home",
+      "/about": "about",
+      "/portfolio": "portfolio",
+      "/blog": "blog",
+      "/contact": "contact",
+    };
+    const id = map[location.pathname];
+    if (id && id !== activeSection) setActiveSection(id);
+  }, [location.pathname, neutral]);
 
   const handleSetActive = (id) => {
-    setActiveSection(id);
     setIsOpen(false);
+    const targetPath = id === "home" ? "/" : `/${id}`;
 
-    // Use react-router navigation instead of hash
-    navigate(id === "home" ? "/" : `/${id}`);
+    if (neutral) {
+      // Delegate to parent (BlogDetailPage) so it can close modal then navigate + scroll
+      if (typeof onNavigate === "function") onNavigate(targetPath, id);
+      return;
+    }
+
+    setActiveSection(id);
+    navigate(targetPath);
+    // Immediate smooth scroll (in case route already rendered)
+    requestAnimationFrame(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   const handleToggle = () => {
@@ -62,6 +98,7 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-transparent backdrop-blur-md border-b border-transparent dark:border-gray-800 transition-colors">
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+
         {/* Logo + Text Group */}
         <button
           onClick={() => handleSetActive("home")}
@@ -87,24 +124,29 @@ const Header = () => {
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex gap-8 items-center">
-          {menuItems.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => handleSetActive(m.id)}
-              className={`relative no-underline text-base font-medium bg-transparent border-none cursor-pointer focus:outline-none active:outline-none ${
-                activeSection === m.id
-                  ? "text-black dark:text-white"
-                  : "text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white"
-              }`}
-            >
-              {m.label}
-              <span
-                className={`absolute left-0 -bottom-1 h-[2px] bg-blue-400 transition-all duration-300 ${
-                  activeSection === m.id ? "w-full" : "w-0"
+          {menuItems.map((m) => {
+            const isActive = !neutral && activeSection === m.id;
+            return (
+              <button
+                key={m.id}
+                onClick={() => handleSetActive(m.id)}
+                className={`relative no-underline text-base font-medium bg-transparent border-none cursor-pointer focus:outline-none active:outline-none ${
+                  isActive
+                    ? "text-black dark:text-white"
+                    : "text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white"
                 }`}
-              />
-            </button>
-          ))}
+              >
+                {m.label}
+                {!neutral && (
+                  <span
+                    className={`absolute left-0 -bottom-1 h-[2px] bg-blue-400 transition-all duration-300 ${
+                      isActive ? "w-full" : "w-0"
+                    }`}
+                  />
+                )}
+              </button>
+            );
+          })}
         </nav>
 
         {/* Right: Contact + Theme Toggle + Mobile Menu */}
@@ -153,19 +195,20 @@ const Header = () => {
       {isOpen && (
         <div className="md:hidden bg-white dark:bg-gray-900">
           <nav className="flex flex-col px-6 py-4 gap-3">
-            {menuItems.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => handleSetActive(m.id)}
-                className={`transition text-center bg-transparent border-none focus:outline-none active:outline-none ${
-                  activeSection === m.id
-                    ? "text-blue-400"
-                    : "text-gray-800 dark:text-gray-200"
-                }`}
-              >
-                {m.label}
-              </button>
-            ))}
+            {menuItems.map((m) => {
+              const isActive = !neutral && activeSection === m.id;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => handleSetActive(m.id)}
+                  className={`transition text-center bg-transparent border-none focus:outline-none active:outline-none ${
+                    isActive ? "text-blue-400" : "text-gray-800 dark:text-gray-200"
+                  }`}
+                >
+                  {m.label}
+                </button>
+              );
+            })}
             <button
               onClick={() => handleSetActive("contact")}
               className="text-blue-400 dark:text-blue-300 transition bg-transparent border-none focus:outline-none active:outline-none text-center"
