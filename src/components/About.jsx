@@ -3,7 +3,7 @@ import jsSvg from "../assets/images/iconSvg/jsSvg.svg";
 import reactSvg from "../assets/images/iconSvg/reactSvg.svg";
 import reactnativeSvg from "../assets/images/iconSvg/reactnativeSvg.svg";
 import vueSvg from "../assets/images/iconSvg/vueSvg.svg";
-import mongoSvg from "../assets/images/iconSvg/mongoDbSVG.svg";
+import mongoSvg1 from "../assets/images/iconSvg/mongoDbSVG1.svg";
 import gitSvg from "../assets/images/iconSvg/gitSvg.svg";
 import tailwindSvg from "../assets/images/iconSvg/tailwindSvg.svg";
 import sassSvg from "../assets/images/iconSvg/sassSvg.svg";
@@ -59,7 +59,7 @@ const About = () => {
     },
     {
       id: "mongo",
-      img: mongoSvg,
+      img: mongoSvg1,
       title: "MongoDB",
       description: "Using MongoDB for scalable databases on the backend.",
     },
