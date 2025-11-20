@@ -123,15 +123,16 @@ const BlogDetailPage = ({ post, onClose, HeaderComponent }) => {
   // Auto-close on browser Back/Forward when leaving /blog/:slug
   useEffect(() => {
     if (!location.pathname.startsWith("/blog/")) {
-      // If user went back to /blog (list) or elsewhere, close modal
       onClose?.({ viaHistory: true });
     }
   }, [location.pathname, onClose]);
 
   const handleHeaderNavigate = (targetPath, id) => {
-    try { onClose?.({ viaHeader: true }); } catch {}
+    try {
+      onClose?.({ viaHeader: true });
+    } catch {}
     setTimeout(() => {
-      navigate(targetPath); // push, not replace
+      navigate(targetPath);
       setTimeout(() => {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -141,20 +142,19 @@ const BlogDetailPage = ({ post, onClose, HeaderComponent }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col bg-white dark:bg-slate-950 text-black dark:text-white transition-all duration-300"
+      className="fixed inset-0 z-50 flex flex-col bg-white dark:bg-gray-900 text-black dark:text-white transition-all duration-300"
       role="dialog"
       aria-modal="true"
     >
-      <div className="absolute inset-0 bg-white dark:bg-slate-950" aria-hidden="true" />
+      <div className="absolute inset-0 bg-white dark:bg-gray-900" aria-hidden="true" />
 
-      <div className="relative z-10 w-full h-full overflow-y-auto bg-white dark:bg-slate-950 pt-2">
-        {/* STICKY HEADER */}
+      <div className="relative z-10 w-full h-full overflow-y-auto bg-white dark:bg-gray-900 pt-2">
+        {/* HEADER */}
         {HeaderComponent ? (
           <>
-            <div className="sticky top-0 z-50 bg-white dark:bg-slate-950 shadow-sm">
+            <div className="relative z-50">
               <HeaderComponent neutral onNavigate={handleHeaderNavigate} />
             </div>
-            {/* Spacer to ensure page content renders below the fixed header */}
             <div aria-hidden="true" className="h-16" />
           </>
         ) : null}
@@ -165,7 +165,7 @@ const BlogDetailPage = ({ post, onClose, HeaderComponent }) => {
             <img
               src={post.coverImage}
               alt={post.title}
-              className="w-full h-auto max-h-80 object-contain object-center shadow-md rounded-lg "
+              className="w-full h-auto max-h-80 object-contain object-center shadow-md rounded-lg"
             />
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold text-white bg-blue-400 shadow-md">
